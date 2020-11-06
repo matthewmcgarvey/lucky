@@ -70,7 +70,26 @@ class Shared::Field(T) < Lucky::BaseComponent
     end
 
     mount Shared::FieldErrors, attribute
+    # works if I inline the definition of `mount`
+    # print_component_comment(Shared::FieldErrors) do
+    #   Shared::FieldErrors.new(attribute).view(view).render
+    # end
   end
+
+  # works if I copy and paste the methods directly into the class
+  # def mount(component : Lucky::BaseComponent.class, *args, **named_args) : Nil
+  #   print_component_comment(component) do
+  #     component.new(*args, **named_args).view(view).render
+  #   end
+  # end
+
+  # def mount(component : Lucky::BaseComponent.class, *args, **named_args) : Nil
+  #   print_component_comment(component) do
+  #     component.new(*args, **named_args).view(view).render do |*yield_args|
+  #       yield *yield_args
+  #     end
+  #   end
+  # end
 
   # Use a text_input by default
   def render
