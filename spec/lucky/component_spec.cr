@@ -43,6 +43,42 @@ private class ComponentWithBlockAndNoBlockArgs < Lucky::BaseComponent
   end
 end
 
+class User < Avram::Model
+  table do
+    column name : String
+  end
+end
+
+class SaveUser < User::SaveOperation
+  permit_columns name
+end
+
+class Shared::FieldErrors(T) < Lucky::BaseComponent
+  needs attribute : Avram::PermittedAttribute(T)
+
+  def render
+  end
+end
+
+
+class Shared::Field(T) < Lucky::BaseComponent
+  needs attribute : Avram::PermittedAttribute(T)
+
+  def render
+    tag_defaults field: attribute do |input_builder|
+      yield input_builder
+    end
+
+    mount Shared::FieldErrors, attribute
+  end
+
+  # Use a text_input by default
+  def render
+    render &.text_input
+  end
+end
+
+
 private class TestMountPage
   include Lucky::HTMLPage
 
@@ -54,6 +90,7 @@ private class TestMountPage
     mount(ComponentWithBlock, "Jane") do |name|
       text name.upcase
     end
+    mount Shared::Field, attribute: SaveUser.new.name, label_text: "Name"
     view
   end
 end
