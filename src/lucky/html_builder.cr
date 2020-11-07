@@ -16,7 +16,6 @@ module Lucky::HTMLBuilder
   include Lucky::UrlHelpers
   include Lucky::TimeHelpers
   include Lucky::ForgeryProtectionHelpers
-  include Lucky::MountComponent
   include Lucky::HelpfulParagraphError
   include Lucky::RenderIfDefined
   include Lucky::TagDefaults
@@ -26,5 +25,15 @@ module Lucky::HTMLBuilder
   def perform_render : IO
     render
     view
+  end
+
+  def mount(component : Lucky::BaseComponent.class, *args, **named_args) : Nil
+    component.new(*args, **named_args).view(view).render
+  end
+
+  def mount(component : Lucky::BaseComponent.class, *args, **named_args) : Nil
+    component.new(*args, **named_args)
+      .view(view)
+      .render { |*yield_args| yield *yield_args }
   end
 end
